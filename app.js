@@ -22,14 +22,14 @@ async function siapkanKatalog() {
 
     try {
         const respons = await fetch("data/penawaran.json");
-        if (!respons.ok) throw new Error(`HTTP error! status: ${respons.status}`);
+        if (!respons.ok) throw new Error(`HTTP ${respons.status}`);
         const penawaran = await respons.json();
 
         function perbaruiTampilan() {
             const kata = inputCari.value.trim().toLowerCase();
             const kategori = pilihKategori.value;
             const hasil = penawaran.filter((item) => {
-                const cocokKata = `${item.nama} ${item.penyedia}` .toLowerCase().includes(kata);
+                const cocokKata = `${item.nama}·${item.penyedia}`.toLowerCase().includes(kata);
                 const cocokKategori = kategori === "semua" || item.kategori === kategori;
                 return cocokKata && cocokKategori;
             });
@@ -48,17 +48,17 @@ async function siapkanKatalog() {
 
     function renderKartu(data, wadah, status, keranjang) {
         wadah.replaceChildren();
-        status.textContent = `${data.length} penawaran ditemukan. `;
+        status.textContent = `${data.length} penawaran ditemukan.`;
         data.forEach((item) => {
             const artikel = document.createElement("article");
             artikel.className = "offer-card";
             artikel.innerHTML = `
-                <div class="offer-card__visual" aria-hidden="true"></div>
-                <div class="offer-card__content">
+                <div class="offer-card_visual" aria-hidden="true"></div>
+                <div class="offer-card_content">
                     <span class="badge">${item.labelKategori}</span>
                     <h3>${item.nama}</h3>
-                    <p class="offer-card__meta">${item.penyedia} . ${item.stok} ${item.satuan}</p>
-                    <p class="offer-card__price"><del>${rupiah.format(item.hargaNormal)} </del>
+                    <p class="offer-card__meta">${item.penyedia} · ${item.stok} ${item.satuan}</p>
+                    <p class="offer-card__price"><del>${rupiah.format(item.hargaNormal)}</del>
                        <strong>${item.hargaPenawaran === 0 ? "Tanpa biaya" : rupiah.format(item.hargaPenawaran)}</strong></p>
                       <button class="button" type="button" data-id="${item.id}">Tambah</button>
                     </div> 
@@ -72,7 +72,7 @@ async function siapkanKatalog() {
     }
 
     function perbaruiRingkasan(keranjang) {
-        const total = keranjang.reduce ((jumlah, item) => jumlah + item.hargaPenawaran, 0);
+        const total = keranjang.reduce((jumlah, item) => jumlah + item.hargaPenawaran, 0);
         document.querySelector("#jumlah-item").textContent = keranjang.length;
         document.querySelector("#total-pesanan").textContent = rupiah.format(total);
     }
